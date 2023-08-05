@@ -1,0 +1,2 @@
+# storetheme
+Crafting Store Theme
