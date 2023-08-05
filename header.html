@@ -1,0 +1,27 @@
+<div class="btn-header-wrapper">
+<a class="btn btn-theme btn-header" href="{{ forums_link }}"><i class="fas fa-chevron-circle-left"></i><span class="cart-text"> {{ forums_button_name }}</span></a>
+<a class="btn btn-theme btn-header float-right" href="/checkout/basket"><i class="fas fa-shopping-cart"></i><span class="cart-text"> {{ language.shopping_basket }}</span></a>
+</div>
+<div class="color-overlay" style="margin-top: -70px;">
+    <div class="header"{% if particles|length > 2 %} id="header-pjs"{% endif %} style="{% if store.background_url !=null %}background: url('{{ store.background_url }}') no-repeat center; {% endif %}{% if color_overlay|length > 2 %}opacity: 0.2; z-index: 1{% else %}opacity: 1; z-index: 4{% endif %}"></div>
+</div>
+<div class="box box1">
+    <h1>
+        <svg class="creeper" viewBox="0 0 24 24">
+            <path fill="#FFFFFF" d="M4,2H20A2,2 0 0,1 22,4V20A2,2 0 0,1 20,22H4A2,2 0 0,1 2,20V4A2,2 0 0,1 4,2M6,6V10H10V12H8V18H10V16H14V18H16V12H14V10H18V6H14V10H10V6H6Z" />
+        </svg>
+        Server
+    </h1>
+    <span class="btn" style="cursor: text"><i class="fas fa-sign-in-alt"></i> Connect now using the IP <span style="cursor: pointer" onclick="copyToClipboard('#ip')" data-toggle="tooltip" title="Click to copy" id="ip">{{ server_ip }}</span></span>
+    <br />
+    <span><i class="fas fa-users"></i> <span class="server-status">Loading...</span></span>
+</div>
+
+<a href="/"><img class="logo{% if animate_logo|length > 2 %} animated-logo{% endif %}" alt="logo" src='{{ store.logo_url }}'></a>
+
+<div class="box box2">
+    <h1><i class="fab fa-discord"></i> Discord</h1>
+    <span class="btn discord-txt"><i class="fas fa-sign-in-alt"></i> Connect with the link <a href="https://{{ discord_link }}" class="discord-link" target="_blank" rel="nofollow">{{ discord_link }}</a></span></span>
+    <br />
+    <span><i class="fas fa-users"></i> <span class="discord-status">Loading...</span></span>
+</div>

@@ -1,0 +1,23 @@
+<div class="card">
+	<div class="card-header header-theme">{{ module.header }}</div>
+    <div class="card-body">
+        <div class="text-center">
+			<div class="row">
+                    <div class="col-4">
+                        {% if module.data.avatarUrl is defined %}
+				            <img src="{{ module.data.avatarUrl }}" style="height:50px"><br>
+			            {% else %}
+				            <img src="https://cravatar.eu/head/{{ module.data.uuid }}/200" style="height:50px"><br>
+			            {% endif %}
+                    </div>
+                    <div class="col-8">
+                         <span style="margin-bottom: 10px; display: inline-block; float: left">{{ module.data.mc_name }}
+
+                        {% if module.data.show_amount_spend == 1 %}
+				            {{ module.data.total|number_format(2, '.', ',') }} {{ store.currency }}
+			            {% endif %}</span>
+                    </div>
+            </div>
+        </div>
+    </div>
+</div>

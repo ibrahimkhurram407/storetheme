@@ -1,0 +1,28 @@
+<div class="card card-catagories">
+    <div class="card-header header-theme">Store</div>
+    <div class="card-body">
+        <a class="btn btn-theme btn-block" href="/">{{ language.home }}</a>
+        {% for category in categories %}
+                {% if category.children %}
+                <div class="dropdown dropright">
+                    <a href="#" class="dropdown-toggle btn btn-theme btn-block" id="{{ category.name }}" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                        {{ category.name }}
+                        <span class="caret"></span>
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="{{ category.name }}">
+                        {% for category in category.children %}
+                        <a class="dropdown-item" href="/category/{{ category.id }}">{{ category.name }}</a>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% else %}
+                {% if category.main == 0 %}
+                <a class="btn btn-theme btn-block" href="/category/{{ category.id }}">{{ category.name }}</a>
+                {% endif %}
+                {% endif %}
+                {% endfor %}
+                {% for page in pages %}
+                <a class="btn btn-theme btn-block" href="/{{ page.slug }}">{{ page.name }}</a>
+        {% endfor %}
+    </div>
+</div>

@@ -1,0 +1,257 @@
+{% extends base %} {% block page %}
+        <div class="card">
+            <div class="card-header header-theme">Review Your Cart</div>
+            <div class="card-body">
+                {% if basketItems %}
+                <table class="table table-responsive table-striped">
+                    <thead>
+                        <tr>
+                            <th>{{ language.name }}</th>
+                            <th>{{ language.price }}</th>
+                            <th>{{ language.quantity }}</th>
+                            <th>{{ language.subTotal }}</th>
+                            <th class="text-right">{{ language.options }}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for basketItem in basketItems %}
+                        <tr>
+                            <td>{{ basketItem.name }}</td>
+                            <td>{{ basketItem.price|number_format(2, '.', ',') }} {{ store.currency }}{{ basketItem.subscription ? language.month : '' }}</td>
+                            <td class="quantity">
+                                {% if basketItem.disableQuantity or isSubscriptionPayment %}
+                                    1
+                                {% else %}
+                                <form method="post" action="/checkout/basket/quantity">
+                                    <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            <input class="form-control" style="width: 50px;" type="text" name="quantity" min="1" max="100" value="{{ basketItem.quantity}}">
+                                            <input type="hidden" name="packageId" value="{{ basketItem.identifier }}">
+                                            <button class="btn btn-sm btn-theme" style="margin-left: 10px">{{ language.update }}</button>
+                                        </div>
+                                    </div>
+                                </form>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if basketItem.subTotal == basketItem.originalSubTotal %}
+                                    {{ basketItem.originalSubTotal|number_format(2, '.', ',') }}
+                                {% else %}
+                                    <del>{{ basketItem.originalSubTotal|number_format(2, '.', ',') }}</del>
+                                    {{ basketItem.subTotal|number_format(2, '.', ',') }}
+                                {% endif %}
+                                {{ store.currency }}
+                            </td>
+                            <td class="text-right">
+                                <a href="/checkout/basket/remove/{{  basketItem.identifier }}" class="btn btn-secondary" data-no-instant><i class="fas fa-trash-alt"></i></a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                <div class="row">
+                    <div class="col-md-6">
+                        <p>{{ language.price }}: <b>{{ totalPrice|number_format(2, '.', ',') }}</b> {{ store.currency }}</p>
+                    </div>
+                    {% if couponCode != null %}
+                    <div class="col-md-6">
+                        <span class="float-right">{{ language.coupon }}: <b>{{ couponCode }} <a href="/checkout/coupons/clear" data-no-instant>X</a></b></span>
+                    </div>
+                    {% endif %}
+                </div>
+                {% else %} There are no items in your cart! {% endif %}
+                <hr /> {% if store.enable_discount %}
+                <form method="post" action="/checkout/coupons/add">
+                    <div class="input-group">
+                        <input style="margin-right: 5px;" type="text" name="coupon" placeholder="{{ language.redeemPlaceholder }}" class="form-control">
+                        <div class="input-group-btn">
+                            <button class="btn btn-theme">{{ language.redeem }} <i class="fa fa-arrow-right"></i></button>
+                        </div>
+                    </div>
+                </form>
+                {% endif %}
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-header header-theme">Checkout Info</div>
+            <div class="card-body">
+                <form method="POST" action="/checkout/basket/payment" accept-charset="UTF-8">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <input style="margin-bottom: 10px;" name="email" placeholder="{{ language.email }}" class="form-control" type="text" required>
+                        </div>
+                        <div class="col-md-6">
+                            {% if mcName == null %}
+                                <input name="mc_name" placeholder="{{ language.minecraft_name_placeholder }}" class="form-control" type="text" required>
+                            {% else %}
+                                <input title="{{ mcName }}" value="{{ mcName }}" class="form-control" type="text" disabled>
+                                <a style="margin-top: 5px; display: inline-block;" href="/checkout/basket/forget" data-no-instant>{{ language.change_minecraft_name }}</a>
+                            {% endif %}
+                            {% if store.enableReferral %}
+                                <br/><input name="referredBy" pattern="[a-zA-Z0-9_]{1,30}" placeholder="{{ language.referred_by }}" class="form-control" type="text">
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    {% if discord.require %}
+                        {% if discord.name is not null %}
+                            <br/><input name="discordName" placeholder="{{ language.discordAccount }} {{ discord.name }}" class="form-control" type="text" disabled>
+                            <a style="margin-top: 5px; display: inline-block;" href="/auth/discord/login">{{ language.discordAccountChange }}</a>
+                        {% else %}
+                            <br/><input name="discordName" placeholder="{{ language.discordAccount }} {{ language.discordAccountNotLoggedIn }}" class="form-control" type="text" disabled>
+                            <a style="margin-top: 5px; display: inline-block;" href="/auth/discord/login">{{ language.discordAccountLogin }}</a>
+                        {% endif %}
+                    {% endif %}
+                    
+                    <hr /> {% if totalPrice > 0 %} {% if store.enable_paypal %}
+                    <div class="radio">
+                        <label>
+                            <input type="radio" name="gateway" value="paypal" required>
+                            <span class="btn btn-theme">{{ language.paypal }}</span>
+                        </label>
+                    </div>
+                    {% endif %} {% if store.enable_paygol %}
+                    <div class="radio">
+                        <label>
+                            <input type="radio" name="gateway" value="paygol" required>
+                            <span class="btn btn-theme">{{ language.paygol }}</span>
+                        </label>
+                    </div>
+                    {% endif %} {% if store.enable_paymentwall %}
+                    <div class="radio">
+                        <label>
+                            <input type="radio" name="gateway" value="paymentwall" required>
+                            <span class="btn btn-theme">{{ language.paymentwall }}</span>
+                        </label>
+                    </div>
+                    {% endif %} {% if store.enable_xsolla %}
+                    <div class="radio">
+                        <label>
+                            <input type="radio" name="gateway" value="xsolla" required>
+                            <span class="btn btn-theme">{{ language.xsolla }}</span>
+                        </label>
+                    </div>
+                    {% endif %} {% if store.enable_stripe %}
+                    <div class="radio">
+                        <label>
+                            <input type="radio" name="gateway" value="stripe" required>
+                            <span class="btn btn-theme">{{ language.stripe }}</span>
+                        </label>
+                    </div>
+                    {% endif %} {% if store.enable_mollie is defined and store.enable_mollie %}
+                    <div class="radio">
+                        <label>
+                            <input type="radio" name="gateway" value="mollie" required>
+                            <span class="btn btn-theme">{{ language.mollie }}</span>
+                        </label>
+                    </div>
+                    {% endif %} {% if store.enable_mercadopago is defined and store.enable_mercadopago %}
+                        <div class="radio">
+                            <label>
+                                <input type="radio" name="gateway" value="mercadopago" required>
+                                <span class="btn btn-theme">{{ language.mercadopago }}</span>
+                            </label>
+                        </div>
+                    {% endif %} {% if store.enable_pagseguro is defined and store.enable_pagseguro %}
+                        <div class="radio">
+                            <label>
+                                <input type="radio" name="gateway" value="pagseguro" required>
+                                <span class="btn btn-theme">{{ language.pagseguro }}</span>
+                            </label>
+                        </div>
+                    {% endif %} {% if store.enable_onebip is defined and store.enable_onebip %}
+                        <div class="radio">
+                            <label>
+                                <input type="radio" name="gateway" value="onebip" required>
+                                <span class="btn btn-theme">{{ language.onebip }}</span>
+                            </label>
+                        </div>
+                    {% endif %} {% if store.enable_coinbase is defined and store.enable_coinbase %}
+                        <div class="radio">
+                            <label>
+                                <input type="radio" name="gateway" value="coinbase" required>
+                                <span class="btn btn-theme">{{ language.coinbase }}</span>
+                            </label>
+                        </div>
+                    {% endif %} {% if store.enable_manual is defined and store.enable_manual %}
+                        <div class="radio">
+                            <label>
+                                <input type="radio" name="gateway" value="manual" required>
+                                <span class="btn btn-themek">{{ language.manual }}</span>
+                            </label>
+                        </div>
+                    {% endif %} {% for customGateway in customGateways %}
+                        <div class="radio">
+                            <label>
+                                <input type="radio" name="gateway" value="{{ customGateway.projectKey }}" required>
+                                <span class="btn btn-theme">{{ customGateway.name }}</span>
+                            </label>
+                        </div>
+                    {% endfor %}
+                    <hr /> {% else %} {% if basketItems|length > 0 and (store.enable_free is defined and store.enable_free) %}
+                    <div class="radio">
+                        <label>
+                            <input type="radio" name="gateway" value="free" required>
+                            <span class="btn btn-theme">{{ language.free }}</span>
+                        </label>
+                    </div>
+                    <hr /> {% endif %} {% endif %} {% if store.requireBillingDetails %}
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group focused">
+                                <label for="billingFirstName">{{ language.billingFirstName }}</label>
+                                <input id="billingFirstName" class="form-control" name="billingFirstName" required="">
+                            </div>
+                            <div class="form-group focused">
+                                <label for="billingLastName">{{ language.billingLastName }}</label>
+                                <input id="billingLastName" class="form-control" name="billingLastName" required="">
+                            </div>
+                            <div class="form-group">
+                                <label for="billingAddressOne">{{ language.billingAddressLineOne }}</label>
+                                <input id="billingAddressOne" class="form-control" name="billingAddressLineOne" required="">
+                            </div>
+                            <div class="form-group">
+                                <label for="billingAddressTwo">{{ language.billingAddressLineTwo }}</label>
+                                <input id="billingAddressTwo" class="form-control" name="billingAddressLineTwo">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group focused">
+                                <label for="billingCity">{{ language.billingCity }}</label>
+                                <input id="billingCity" class="form-control" name="billingCity" required="">
+                            </div>
+                            <div class="form-group focused">
+                                <label for="billingState">{{ language.billingState }}</label>
+                                <input id="billingState" class="form-control" name="billingState" required="">
+                            </div>
+                            <div class="form-group focused">
+                                <label for="billingZip">{{ language.billingZipCode }}</label>
+                                <input id="billingZip" class="form-control" name="billingZipCode" required="">
+                            </div>
+                            <div class="form-group">
+                                <label for="billingCountry">{{ language.billingCountry }}</label>
+                                <select class="form-control" id="billingCountry" name="billingCountry" required="">
+                                    <option value=""></option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                    <input name="tos" type="checkbox" required> {{ language.agree }} <a style="margin-bottom: 10px; display: inline-block;" href="/terms" target="_blank">{{
+            language.terms_of_service }}</a>
+                    <br />
+                    <input name="tos_cs" type="checkbox" required> <a href="https://craftingstore.net/terms" target="_blank">{{ language.agreeCraftingStoreTos }}</a>
+                    <hr>
+                    {% if checkout.disable %}
+                        {{ checkout.message }}
+                    {% elseif hasPaymentMethods %}
+                    <button type="submit" class="btn btn-theme">{{ language.checkout }}</button>
+                    {% else %}
+                        No payment methods are configured, please configure some from [ Payments -> Gateways ].
+                    {% endif %}
+            </div>
+            </form>
+        </div>
+    </div>
+
+{% endblock %}

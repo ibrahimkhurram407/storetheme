@@ -1,0 +1,11 @@
+<div class="card">
+	<div class="card-header header-theme">{{ module.header }}</div>
+    <div class="card-body">
+        <div class="text-center">
+            <input style="margin-bottom: 5px" id="card" title="card" name="card" class="form-control" placeholder="{{ language.checkCard }}">
+            <input type="hidden" id="storeId" name="storeId" value="{{ store.id }}">
+            <button class="btn btn-sm btn-block btn-theme js-card-button">{{ language.check }}</button>
+            <div class="js-card-alert"></div>
+        </div>
+    </div>
+</div>

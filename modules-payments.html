@@ -1,0 +1,22 @@
+<div class="card">
+	<div class="card-header header-theme">{{ module.header }}</div>
+    <div class="card-body">
+        {% for payment in module.data %}
+                <div class="row">
+                    <div class="col-3">
+                        {% if payment.avatarUrl is defined %}
+							<img src="{{ payment.avatarUrl }}" class="avatar-img" style="height: 50px"><br>
+						{% else %}
+							<img src="https://cravatar.eu/helmavatar/{{ payment.uuid }}/100.png" class="avatar-img float-right" style="height: 60px"><br>
+						{% endif %}
+                    </div>
+                    <div class="col-9">
+                        <span class="float-left" style="margin-top: 5px; font-size: 0.9rem">
+                        <b>{{ payment.mc_name }}</b><br>
+                        {{ payment.package_name }}
+                        </span>
+                    </div>
+                </div><br/>
+        {% endfor %}
+    </div>
+</div>

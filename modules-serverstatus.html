@@ -1,0 +1,13 @@
+<div class="card" id="serverStatusModule">
+	<div class="card-header header-theme">{{ module.header }}</div>
+    <div class="card-body">
+        <div class="text-center">
+            <div class="js-status-status">-</div>
+            <b>{{ module.data.displayHostname }}</b>
+            <p class="js-status-player-count"></p>
+            <input type="hidden" id="statusServerIp" value="{{ module.data.ip }}">
+            <input type="hidden" id="statusServerPort" value="{{ module.data.port }}">
+            <input type="hidden" id="serverStatusHide" value="{{ module.data.displayOffline }}">
+        </div>
+    </div>
+</div>

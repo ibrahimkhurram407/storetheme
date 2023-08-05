@@ -1,0 +1,59 @@
+{% extends base %}
+
+{% block page %}
+    <div class="card">
+        <div class="card-body">
+            <form method="POST" action="/payment" accept-charset="UTF-8">
+                <b>{{ language.name }}:</b> {{ package.name }}<br>
+                <b>{{ language.price }}:</b> {{ package.new_price|number_format(2, '.', ',') }} {% if package.price !=
+                package.new_price %}
+                <s>{{ package.price|number_format(2, '.', ',') }}</s>{% endif %} {{ store.currency }}
+                <hr>
+                    {% if package.new_price > 0 %}
+                    {% if store.enable_paypal %}
+                        <br>
+                        <button type="submit" name="type" value="paypal"
+                                class="btn btn-theme btn-block">{{ language.paypal }}
+                        </button>
+                    {% endif %}
+
+                    {% if store.enable_paygol %}
+                        <br>
+                        <button type="submit" name="type" value="paygol"
+                                class="btn btn-theme btn-block">{{ language.paygol }}
+                        </button>
+                    {% endif %}
+
+                    {% if store.enable_paymentwall %}
+                        <br>
+                        <button type="submit" name="type" value="paymentwall"
+                                class="btn btn-theme btn-block">{{ language.paymentwall }}
+                        </button>
+                    {% endif %}
+
+                    {% if store.enable_xsolla %}
+                        <br>
+                        <button type="submit" name="type" value="xsolla"
+                                class="btn btn-theme btn-block">{{ language.xsolla }}
+                        </button>
+                    {% endif %}
+
+                    {% if store.enable_mollie is defined and store.enable_mollie %}
+                        <br>
+                        <button type="submit" name="type" value="mollie"
+                                class="btn btn-theme btn-block">{{ language.mollie }}
+                        </button>
+                    {% endif %}
+
+                    {% else %}
+                        <br>
+                        <button type="submit" name="type" value="free"
+                                class="btn btn-theme btn-block">{{ language.free }}
+                        </button>
+                    {% endif %}
+            </form>
+            <hr />
+            {{ package.description | raw }}
+        </div>
+    </div>
+{% endblock %}
